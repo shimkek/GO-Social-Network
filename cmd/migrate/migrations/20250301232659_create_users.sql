@@ -1,3 +1,5 @@
+-- +goose Up
+-- +goose StatementBegin
 CREATE EXTENSION IF NOT EXISTS citext;
 
 CREATE TABLE IF NOT EXISTS users(
@@ -7,3 +9,9 @@ CREATE TABLE IF NOT EXISTS users(
     password bytea NOT NULL,
     created_at timestamp(0) with time zone NOT NULL DEFAULT NOW()
 );
+-- +goose StatementEnd
+
+-- +goose Down
+-- +goose StatementBegin
+DROP TABLE IF EXISTS users;
+-- +goose StatementEnd
