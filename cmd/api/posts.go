@@ -54,7 +54,7 @@ func (app *application) getPostHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch {
 		case errors.Is(err, store.ErrNotFound):
-			writeJSONError(w, http.StatusNotFound, err.Error())
+			app.notFoundError(w, r, err)
 		default:
 			app.internalServerError(w, r, err)
 		}
