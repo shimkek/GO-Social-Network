@@ -6,8 +6,8 @@ ALTER TABLE comments ADD CONSTRAINT fk_post FOREIGN KEY (post_id) REFERENCES pos
 
 -- +goose Down
 -- +goose StatementBegin
-ALTER TABLE posts
+ALTER TABLE comments
 DROP CONSTRAINT fk_user;
-ALTER TABLE posts
+ALTER TABLE comments
 DROP CONSTRAINT fk_post;
 -- +goose StatementEnd
