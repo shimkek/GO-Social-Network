@@ -18,6 +18,7 @@ type Storage struct {
 		GetByPostID(context.Context, int64) (*Post, error)
 		Delete(context.Context, int64) error
 		Update(context.Context, *Post) error
+		GetUserFeed(context.Context, int64) (*[]PostWithMetada, error)
 	}
 	Users interface {
 		Create(context.Context, *User) error
@@ -28,8 +29,8 @@ type Storage struct {
 		Create(context.Context, *Comment) error
 	}
 	Followers interface {
-		Follow(context.Context, int64, int64) error
-		Unfollow(context.Context, int64, int64) error
+		Follow(ctx context.Context, followedID int64, followerID int64) error
+		Unfollow(ctx context.Context, followedID int64, followerID int64) error
 	}
 }
 

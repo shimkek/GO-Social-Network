@@ -24,7 +24,7 @@ type FollowUser struct {
 }
 
 func (app *application) followUserHandler(w http.ResponseWriter, r *http.Request) {
-	followerUser := getUserFromCtx(r)
+	followedUser := getUserFromCtx(r)
 
 	var payload FollowUser
 	if err := readJSON(w, r, &payload); err != nil {
@@ -32,7 +32,7 @@ func (app *application) followUserHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 	ctx := r.Context()
-	if err := app.store.Followers.Follow(ctx, followerUser.ID, payload.UserID); err != nil {
+	if err := app.store.Followers.Follow(ctx, followedUser.ID, payload.UserID); err != nil {
 		app.badRequestError(w, r, err)
 		return
 	}
