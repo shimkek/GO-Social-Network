@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/shimkek/social/internal/store"
+	"github.com/shimkek/GO-Social-Network/internal/store"
 )
 
 func (app *application) getUserHandler(w http.ResponseWriter, r *http.Request) {

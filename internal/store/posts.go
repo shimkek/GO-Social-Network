@@ -32,18 +32,31 @@ type PostsStore struct {
 	db *sql.DB
 }
 
-func (s *PostsStore) GetUserFeed(ctx context.Context, userID int64) (*[]PostWithMetada, error) {
+func (s *PostsStore) GetUserFeed(ctx context.Context, userID int64, fq PaginatedFeedQuery) (*[]PostWithMetada, error) {
+	sinceString := ""
+	untilString := ""
+
+	if fq.Since != "" {
+		sinceString = "AND (p.created_at>='" + fq.Since + "') "
+	}
+
+	if fq.Until != "" {
+		untilString = "AND (p.created_at<='" + fq.Until + "') "
+	}
+
 	query := `
 	SELECT p.id, p.user_id, p.title, p.content, p.created_at, p.updated_at, p.tags, u.username, COUNT(c.id) as comments_count
 	FROM posts p
 	LEFT JOIN comments c ON p.id = c.post_id
 	LEFT JOIN users u on p.user_id = u.id
 	JOIN followers f ON f.followed_id = p.user_id OR p.user_id = $1
-	WHERE f.follower_id = $1 
-	GROUP BY p.id, u.username
-	ORDER BY created_at DESC 
-	`
-
+	WHERE 
+		f.follower_id = $1 AND
+		(p.title ILIKE '%' || $4 || '%' OR p.content ILIKE '%' || $4 || '%') AND
+		(p.tags @> $5 OR $5 = '{}')` + sinceString + untilString +
+		`GROUP BY p.id, u.username
+	ORDER BY created_at ` + fq.Sort +
+		` LIMIT $2 OFFSET $3`
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
 	defer cancel()
 
@@ -51,6 +64,10 @@ func (s *PostsStore) GetUserFeed(ctx context.Context, userID int64) (*[]PostWith
 		ctx,
 		query,
 		userID,
+		fq.Limit,
+		fq.Offset,
+		fq.Search,
+		pq.Array(fq.Tags),
 	)
 	if err != nil {
 		return nil, err

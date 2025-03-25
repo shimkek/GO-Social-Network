@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/shimkek/social/internal/db"
-	"github.com/shimkek/social/internal/env"
-	"github.com/shimkek/social/internal/store"
+	"github.com/shimkek/GO-Social-Network/internal/db"
+	"github.com/shimkek/GO-Social-Network/internal/env"
+	"github.com/shimkek/GO-Social-Network/internal/store"
 )
 
 func main() {

@@ -7,7 +7,7 @@ import (
 	"slices"
 
 	"github.com/brianvoe/gofakeit/v7"
-	"github.com/shimkek/social/internal/store"
+	"github.com/shimkek/GO-Social-Network/internal/store"
 )
 
 var tagList = []string{}
