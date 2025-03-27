@@ -22,7 +22,7 @@ type Post struct {
 	User      User      `json:"user"`
 }
 
-type PostWithMetada struct {
+type PostWithMetadata struct {
 	Post         Post
 	CommentCount int    `json:"comments_count"`
 	Username     string `json:"username"`
@@ -32,7 +32,7 @@ type PostsStore struct {
 	db *sql.DB
 }
 
-func (s *PostsStore) GetUserFeed(ctx context.Context, userID int64, fq PaginatedFeedQuery) (*[]PostWithMetada, error) {
+func (s *PostsStore) GetUserFeed(ctx context.Context, userID int64, fq PaginatedFeedQuery) (*[]PostWithMetadata, error) {
 	sinceString := ""
 	untilString := ""
 
@@ -74,9 +74,9 @@ func (s *PostsStore) GetUserFeed(ctx context.Context, userID int64, fq Paginated
 	}
 	defer rows.Close()
 
-	var feed []PostWithMetada
+	var feed []PostWithMetadata
 	for rows.Next() {
-		var p PostWithMetada
+		var p PostWithMetadata
 		err := rows.Scan(
 			&p.Post.ID,
 			&p.Post.UserID,
