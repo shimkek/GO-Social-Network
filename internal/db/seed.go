@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"log"
 	"math/rand"
 	"slices"
@@ -21,12 +22,14 @@ func initTags() {
 	}
 }
 
-func Seed(store store.Storage) {
+func Seed(store store.Storage, db *sql.DB) {
 	ctx := context.Background()
+
+	tx, _ := db.BeginTx(ctx, nil)
 
 	users := generateUsers(100)
 	for _, user := range users {
-		if err := store.Users.Create(ctx, user); err != nil {
+		if err := store.Users.Create(ctx, tx, user); err != nil {
 			log.Println("error creating user: ", err)
 			return
 		}
@@ -55,7 +58,6 @@ func generateUsers(num int) []*store.User {
 		users[i] = &store.User{
 			Username: gofakeit.Username(),
 			Email:    gofakeit.Email(),
-			Password: gofakeit.Password(true, true, true, true, false, 8),
 		}
 	}
 
