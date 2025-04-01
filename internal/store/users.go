@@ -214,3 +214,17 @@ func (s *UsersStore) deleteUserInvitation(ctx context.Context, tx *sql.Tx, id in
 	}
 	return nil
 }
+
+func (s *UsersStore) Delete(ctx context.Context, userID int64) error {
+	query := `
+	DELETE FROM users
+	where id = $1`
+
+	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
+	defer cancel()
+
+	if _, err := s.db.ExecContext(ctx, query, userID); err != nil {
+		return err
+	}
+	return nil
+}
