@@ -85,7 +85,7 @@ func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Reque
 	}
 
 	// todo send email
-	status, err := app.mailer.Send(mailer.UserWelcomeTemplate, user.Username, user.Email, vars, false)
+	status, err := app.mailer.Send(mailer.UserWelcomeTemplate, user.Username, user.Email, vars, true)
 	if err != nil {
 		app.logger.Errorw("error sending welcome email", "error", err)
 
@@ -97,8 +97,8 @@ func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Reque
 		app.internalServerError(w, r, err)
 		return
 	}
-
-	app.logger.Infow("Email sent", "status code", status)
+	app.logger.Infow("Mail sandbox mode enabled. Email is not sent.", "status code", status)
+	// app.logger.Infow("Email sent", "status code", status)
 
 	if err := app.jsonResponse(w, http.StatusCreated, nil); err != nil {
 		app.internalServerError(w, r, err)
