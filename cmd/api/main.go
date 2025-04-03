@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
+	"github.com/shimkek/GO-Social-Network/internal/auth"
 	"github.com/shimkek/GO-Social-Network/internal/db"
 	"github.com/shimkek/GO-Social-Network/internal/env"
 	"github.com/shimkek/GO-Social-Network/internal/mailer"
@@ -60,6 +61,17 @@ func main() {
 			fromEmail: env.GetString("FROM_EMAIL", "osekbar@demomailtrap.co"),
 			fromName:  env.GetString("FROM_NAME", ""),
 		},
+		auth: authConfig{
+			basic: basicAuthConfig{
+				user: env.GetString("AUTH_BASIC_USER", "admin"),
+				pass: env.GetString("AUTH_BASIC_PASS", "admin"),
+			},
+			token: tokenConfig{
+				secret: env.GetString("AUTH_TOKEN_SECRET", "example"),
+				exp:    time.Hour * 24 * 3,
+				iss:    "osekbar",
+			},
+		},
 	}
 
 	// Logger
@@ -77,22 +89,22 @@ func main() {
 
 	store := store.NewStorage(db)
 
-	// mailer := mailer.NewResend(cfg.mail.resend.apiKey, cfg.mail.fromEmail, cfg.mail.fromName)
 	mailtrap, err := mailer.NewMailTrapClient(cfg.mail.mailTrap.apiKey, cfg.mail.fromEmail)
-	// sendGrid, err := mailer.NewSendgrid(cfg.mail.sendGrid.apiKey, cfg.mail.fromEmail)
 	if err != nil {
 		logger.Fatal(err)
 	}
 
-	if err != nil {
-		logger.Fatal(err)
-	}
+	jwtAuthenticator := auth.NewJWTAuthenticator(
+		cfg.auth.token.secret,
+		cfg.auth.token.iss,
+		cfg.auth.token.iss)
 
 	app := &application{
-		config: cfg,
-		store:  store,
-		logger: logger,
-		mailer: mailtrap,
+		config:        cfg,
+		store:         store,
+		logger:        logger,
+		mailer:        mailtrap,
+		authenticator: jwtAuthenticator,
 	}
 
 	mux := app.mount()

@@ -33,10 +33,6 @@ func (app *application) getUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type FollowUser struct {
-	UserID int64 `json:"user_id"`
-}
-
 // FollowUser godoc
 //
 //	@Summary		Follows a user
@@ -51,15 +47,16 @@ type FollowUser struct {
 //	@Security		ApiKeyAuth
 //	@Router			/users/{userID}/follow [put]
 func (app *application) followUserHandler(w http.ResponseWriter, r *http.Request) {
-	followedUser := getUserFromCtx(r)
+	followerUser := getUserFromCtx(r)
 
-	var payload FollowUser
-	if err := readJSON(w, r, &payload); err != nil {
+	followedUserID, err := strconv.ParseInt(chi.URLParam(r, "userID"), 10, 64)
+	if err != nil {
 		app.badRequestError(w, r, err)
 		return
 	}
+
 	ctx := r.Context()
-	if err := app.store.Followers.Follow(ctx, followedUser.ID, payload.UserID); err != nil {
+	if err := app.store.Followers.Follow(ctx, followedUserID, followerUser.ID); err != nil {
 		app.badRequestError(w, r, err)
 		return
 	}
@@ -84,15 +81,16 @@ func (app *application) followUserHandler(w http.ResponseWriter, r *http.Request
 //	@Security		ApiKeyAuth
 //	@Router			/users/{userID}/unfollow [put]
 func (app *application) unfollowUserHandler(w http.ResponseWriter, r *http.Request) {
-	unfollowedUser := getUserFromCtx(r)
+	unfollowerUser := getUserFromCtx(r)
 
-	var payload FollowUser
-	if err := readJSON(w, r, &payload); err != nil {
+	unfollowedUserID, err := strconv.ParseInt(chi.URLParam(r, "userID"), 10, 64)
+	if err != nil {
 		app.badRequestError(w, r, err)
 		return
 	}
+
 	ctx := r.Context()
-	if err := app.store.Followers.Unfollow(ctx, unfollowedUser.ID, payload.UserID); err != nil {
+	if err := app.store.Followers.Unfollow(ctx, unfollowedUserID, unfollowerUser.ID); err != nil {
 		app.badRequestError(w, r, err)
 		return
 	}
