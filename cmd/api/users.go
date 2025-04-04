@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"net/http"
 	"strconv"
 
@@ -30,10 +29,10 @@ func (app *application) getUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := app.store.Users.GetByID(r.Context(), userID)
+	user, err := app.getUserWithCache(r.Context(), userID)
 	if err != nil {
-		switch {
-		case errors.Is(err, store.ErrNotFound):
+		switch err {
+		case store.ErrNotFound:
 			app.notFoundError(w, r, err)
 
 		default:

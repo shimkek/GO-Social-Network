@@ -79,14 +79,14 @@ func (app *application) TokenAuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		ctx := r.Context()
-		user, err := app.store.Users.GetByID(ctx, userID)
+
+		user, err := app.getUserWithCache(ctx, userID)
 		if err != nil {
 			app.unauthorizedError(w, r, err)
 			return
 		}
 
 		ctx = context.WithValue(ctx, userCtx, user)
-
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -124,4 +124,30 @@ func (app *application) checkRolePrecedence(ctx context.Context, user *store.Use
 	}
 
 	return user.Role.Level >= neededRole.Level, nil
+}
+
+func (app *application) getUserWithCache(ctx context.Context, userID int64) (*store.User, error) {
+	if !app.config.redisCfg.enabled {
+		user, err := app.store.Users.GetByID(ctx, userID)
+		if err != nil {
+			return nil, err
+		}
+		return user, nil
+	}
+
+	user, err := app.cacheStorage.Users.Get(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	if user == nil {
+		user, err = app.store.Users.GetByID(ctx, userID)
+		if err != nil {
+			return nil, err
+		}
+		if err := app.cacheStorage.Users.Set(ctx, user); err != nil {
+			return nil, err
+		}
+	}
+	return user, nil
 }
