@@ -99,8 +99,8 @@ func (app *application) mount() http.Handler {
 			r.Route("/{postID}", func(r chi.Router) {
 				r.Use(app.postsContextMiddleware)
 				r.Get("/", app.getPostHandler)
-				r.Delete("/", app.deletePostHandler)
-				r.Patch("/", app.updatePostHandler)
+				r.Delete("/", app.checkPermissions("admin", app.deletePostHandler))
+				r.Patch("/", app.checkPermissions("moderator", app.updatePostHandler))
 			})
 		})
 

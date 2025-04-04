@@ -26,6 +26,8 @@ import (
 //	@Router			/users/feed [get]
 func (app *application) getUserFeedHandler(w http.ResponseWriter, r *http.Request) {
 
+	user := getUserFromCtx(r)
+
 	fq := store.PaginatedFeedQuery{
 		Limit:  20,
 		Offset: 0,
@@ -47,7 +49,7 @@ func (app *application) getUserFeedHandler(w http.ResponseWriter, r *http.Reques
 
 	ctx := r.Context()
 
-	feed, err := app.store.Posts.GetUserFeed(ctx, int64(1), fq)
+	feed, err := app.store.Posts.GetUserFeed(ctx, user.ID, fq)
 	if err != nil {
 		app.internalServerError(w, r, err)
 		return

@@ -24,6 +24,7 @@ type User struct {
 	Password  password `json:"-"`
 	CreatedAt string   `json:"created_at"`
 	IsActive  bool     `json:"is_active"`
+	Role      Role     `json:"role"`
 }
 
 type password struct {
@@ -52,12 +53,18 @@ type UsersStore struct {
 
 func (s *UsersStore) Create(ctx context.Context, tx *sql.Tx, user *User) error {
 	query := `
-	INSERT INTO users (username, password, email) 
-	VALUES ($1, $2, $3) RETURNING id, created_at
+	INSERT INTO users (username, password, email, role_id) 
+	VALUES ($1, $2, $3, (SELECT id FROM roles WHERE name=$4)) 
+	RETURNING id, created_at
 	`
 
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
 	defer cancel()
+
+	role := user.Role.Name
+	if role == "" {
+		role = "user"
+	}
 
 	err := tx.QueryRowContext(
 		ctx,
@@ -65,6 +72,7 @@ func (s *UsersStore) Create(ctx context.Context, tx *sql.Tx, user *User) error {
 		user.Username,
 		user.Password.hash,
 		user.Email,
+		role,
 	).Scan(
 		&user.ID,
 		&user.CreatedAt,
@@ -86,9 +94,10 @@ func (s *UsersStore) Create(ctx context.Context, tx *sql.Tx, user *User) error {
 
 func (s *UsersStore) GetByID(ctx context.Context, userID int64) (*User, error) {
 	query := `
-		SELECT id, username, email, created_at
-		FROM users
-		WHERE id=$1 AND is_active=true
+		SELECT u.id, u.username, u.email, u.created_at, u.role_id, r.name, r.level, r.description
+		FROM users u
+		JOIN roles r on (u.role_id = r.id)
+		WHERE u.id=$1 AND u.is_active=true
 	`
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
 	defer cancel()
@@ -103,6 +112,10 @@ func (s *UsersStore) GetByID(ctx context.Context, userID int64) (*User, error) {
 		&user.Username,
 		&user.Email,
 		&user.CreatedAt,
+		&user.Role.ID,
+		&user.Role.Name,
+		&user.Role.Level,
+		&user.Role.Description,
 	)
 	if err != nil {
 		switch err {
@@ -250,9 +263,9 @@ func (s *UsersStore) GetByEmail(ctx context.Context, email string) (*User, error
 	).Scan(
 		&user.ID,
 		&user.Username,
+		&user.Password.hash,
 		&user.Email,
 		&user.CreatedAt,
-		&user.Password.hash,
 	)
 	if err != nil {
 		switch err {

@@ -58,6 +58,9 @@ func generateUsers(num int) []*store.User {
 		users[i] = &store.User{
 			Username: gofakeit.Username(),
 			Email:    gofakeit.Email(),
+			Role: store.Role{
+				Name: "user",
+			},
 		}
 	}
 

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"context"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -22,10 +22,25 @@ import (
 //	@Failure		404	{object}	error
 //	@Failure		500	{object}	error
 //	@Security		ApiKeyAuth
-//	@Router			/users/{id} [get]
+//	@Router			/users/{userID} [get]
 func (app *application) getUserHandler(w http.ResponseWriter, r *http.Request) {
+	userID, err := strconv.ParseInt(chi.URLParam(r, "userID"), 10, 64)
+	if err != nil {
+		app.badRequestError(w, r, err)
+		return
+	}
 
-	user := getUserFromCtx(r)
+	user, err := app.store.Users.GetByID(r.Context(), userID)
+	if err != nil {
+		switch {
+		case errors.Is(err, store.ErrNotFound):
+			app.notFoundError(w, r, err)
+
+		default:
+			app.internalServerError(w, r, err)
+		}
+		return
+	}
 
 	if err := app.jsonResponse(w, http.StatusOK, user); err != nil {
 		app.internalServerError(w, r, err)
@@ -105,30 +120,30 @@ type userKey string
 
 const userCtx userKey = "user"
 
-func (app *application) userContextMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		userID, err := strconv.ParseInt(chi.URLParam(r, "userID"), 10, 64)
-		if err != nil {
-			app.badRequestError(w, r, err)
-			return
-		}
+// func (app *application) userContextMiddleware(next http.Handler) http.Handler {
+// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 		userID, err := strconv.ParseInt(chi.URLParam(r, "userID"), 10, 64)
+// 		if err != nil {
+// 			app.badRequestError(w, r, err)
+// 			return
+// 		}
 
-		ctx := r.Context()
-		user, err := app.store.Users.GetByID(ctx, userID)
-		if err != nil {
-			switch err {
-			case store.ErrNotFound:
-				app.notFoundError(w, r, err)
-				return
-			default:
-				app.internalServerError(w, r, err)
-				return
-			}
-		}
-		ctx = context.WithValue(ctx, userCtx, user)
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
-}
+// 		ctx := r.Context()
+// 		user, err := app.store.Users.GetByID(ctx, userID)
+// 		if err != nil {
+// 			switch err {
+// 			case store.ErrNotFound:
+// 				app.notFoundError(w, r, err)
+// 				return
+// 			default:
+// 				app.internalServerError(w, r, err)
+// 				return
+// 			}
+// 		}
+// 		ctx = context.WithValue(ctx, userCtx, user)
+// 		next.ServeHTTP(w, r.WithContext(ctx))
+// 	})
+// }
 
 func getUserFromCtx(r *http.Request) *store.User {
 	user, _ := r.Context().Value(userCtx).(*store.User)
