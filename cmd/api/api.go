@@ -15,6 +15,7 @@ import (
 	"github.com/shimkek/GO-Social-Network/docs"
 	"github.com/shimkek/GO-Social-Network/internal/auth"
 	"github.com/shimkek/GO-Social-Network/internal/mailer"
+	"github.com/shimkek/GO-Social-Network/internal/ratelimiter"
 	"github.com/shimkek/GO-Social-Network/internal/store"
 	"github.com/shimkek/GO-Social-Network/internal/store/cache"
 	httpSwagger "github.com/swaggo/http-swagger/v2"
@@ -28,6 +29,7 @@ type application struct {
 	logger        *zap.SugaredLogger
 	mailer        mailer.Client
 	authenticator auth.Authenticator
+	rateLimiter   ratelimiter.Limiter
 }
 
 type config struct {
@@ -39,6 +41,12 @@ type config struct {
 	frontendURL string
 	auth        authConfig
 	redisCfg    redisConfig
+	rateLimiter rateLimiterConfig
+}
+type rateLimiterConfig struct {
+	RequestPerTimeFrame int
+	TimeFrame           time.Duration
+	Enabled             bool
 }
 
 type redisConfig struct {
@@ -99,6 +107,7 @@ func (app *application) mount() http.Handler {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(app.RateLimitMiddleware)
 
 	r.Route("/v1", func(r chi.Router) {
 		// r.With(app.BasicAuthMiddleware).Get("/health", app.healthCheckHandler)

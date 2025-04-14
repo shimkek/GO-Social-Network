@@ -10,6 +10,7 @@ import (
 	"github.com/shimkek/GO-Social-Network/internal/db"
 	"github.com/shimkek/GO-Social-Network/internal/env"
 	"github.com/shimkek/GO-Social-Network/internal/mailer"
+	"github.com/shimkek/GO-Social-Network/internal/ratelimiter"
 	"github.com/shimkek/GO-Social-Network/internal/store"
 	"github.com/shimkek/GO-Social-Network/internal/store/cache"
 	"go.uber.org/zap"
@@ -80,6 +81,11 @@ func main() {
 				iss:    "osekbar",
 			},
 		},
+		rateLimiter: rateLimiterConfig{
+			RequestPerTimeFrame: env.GetInt("RATELIMITER_REQUESTS_COUNT", 20),
+			TimeFrame:           time.Second * 5,
+			Enabled:             env.GetBool("RATE_LIMITER_ENABLED", true),
+		},
 	}
 
 	// Logger
@@ -106,6 +112,10 @@ func main() {
 
 	cacheStorage := cache.NewRedisStorage(rdb)
 
+	rateLimiter := ratelimiter.NewFixedWindowLimiter(
+		cfg.rateLimiter.RequestPerTimeFrame,
+		cfg.rateLimiter.TimeFrame)
+
 	mailtrap, err := mailer.NewMailTrapClient(cfg.mail.mailTrap.apiKey, cfg.mail.fromEmail)
 	if err != nil {
 		logger.Fatal(err)
@@ -123,6 +133,7 @@ func main() {
 		logger:        logger,
 		mailer:        mailtrap,
 		authenticator: jwtAuthenticator,
+		rateLimiter:   rateLimiter,
 	}
 
 	mux := app.mount()
