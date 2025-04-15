@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/shimkek/GO-Social-Network/compare/v1.0.0...v1.1.0) (2025-04-15)
+
+
+### Features
+
+* update api version automatically ([232f217](https://github.com/shimkek/GO-Social-Network/commit/232f2171b2fdef084b92c92cd0c7546482c19458))
+
 ## 1.0.0 (2025-04-15)
 
 
