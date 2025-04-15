@@ -18,7 +18,7 @@ import (
 	"go.uber.org/zap"
 )
 
-const version = "1.1.0"
+const version = "1.1.1"
 
 //	@title			Go Social Network
 //	@description	API for GO Social Network
