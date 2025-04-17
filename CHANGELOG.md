@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.0](https://github.com/shimkek/GO-Social-Network/compare/v1.1.1...v1.2.0) (2025-04-17)
+
+
+### Features
+
+* add dockerfile ([3e5d542](https://github.com/shimkek/GO-Social-Network/commit/3e5d5429722d425a87bb21a0bd91f9396645f586))
+
+
+### Bug Fixes
+
+* dockerfile and audit action ([07e4cb5](https://github.com/shimkek/GO-Social-Network/commit/07e4cb58d8cff4a68450ab5d64590ffb694fffee))
+* dockerfile certificate fix ([483371b](https://github.com/shimkek/GO-Social-Network/commit/483371b99dc7219012420dfad33d60b018c55535))
+* env file load on cloud ([07cdf32](https://github.com/shimkek/GO-Social-Network/commit/07cdf32e356e85b94d41b78b7343177a179c3caf))
+
 ## [1.1.1](https://github.com/shimkek/GO-Social-Network/compare/v1.1.0...v1.1.1) (2025-04-15)
 
 
