@@ -36,9 +36,12 @@ const version = "1.1.1"
 // @name						Authorization
 // @description
 func main() {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Error loading .env file: %s", err)
+
+	if env.GetString("ENV", "") != "production" {
+		err := godotenv.Load(".env")
+		if err != nil {
+			log.Fatalf("Error loading .env file: %s", err)
+		}
 	}
 
 	cfg := config{
