@@ -1,4 +1,13 @@
 definitions:
+  main.CreateCommentPayload:
+    properties:
+      content:
+        maxLength: 300
+        minLength: 1
+        type: string
+    required:
+    - content
+    type: object
   main.CreatePostPayload:
     properties:
       content:
@@ -344,6 +353,44 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Updates a post
+      tags:
+      - posts
+  /posts/{id}/comment:
+    post:
+      consumes:
+      - application/json
+      description: Creates a comment for the post specifies
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Comment payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.CreateCommentPayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/store.Comment'
+        "400":
+          description: Bad Request
+          schema: {}
+        "401":
+          description: Unauthorized
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Creates a comment
       tags:
       - posts
   /users/{userID}:
