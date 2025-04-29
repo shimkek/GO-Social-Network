@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.2.0](https://github.com/shimkek/GO-Social-Network/compare/v1.1.1...v1.2.0) (2025-04-29)
+
+
+### Features
+
+* add create comment handler ([00105f2](https://github.com/shimkek/GO-Social-Network/commit/00105f26b9004251e260d81ff39ca833298f152c))
+* add dockerfile ([3e5d542](https://github.com/shimkek/GO-Social-Network/commit/3e5d5429722d425a87bb21a0bd91f9396645f586))
+* add jwt to httponly cookie ([99a1e22](https://github.com/shimkek/GO-Social-Network/commit/99a1e222d218df4a9ab03588a267e109f2eb46f0))
+* init web, add auth and feed display ([ba9f3b5](https://github.com/shimkek/GO-Social-Network/commit/ba9f3b5e4d1eea8e69027bbb2ab7e77399ac2d22))
+
+
+### Bug Fixes
+
+* dockerfile and audit action ([07e4cb5](https://github.com/shimkek/GO-Social-Network/commit/07e4cb58d8cff4a68450ab5d64590ffb694fffee))
+* dockerfile certificate fix ([483371b](https://github.com/shimkek/GO-Social-Network/commit/483371b99dc7219012420dfad33d60b018c55535))
+* env file load on cloud ([07cdf32](https://github.com/shimkek/GO-Social-Network/commit/07cdf32e356e85b94d41b78b7343177a179c3caf))
+
 ## [1.1.1](https://github.com/shimkek/GO-Social-Network/compare/v1.1.0...v1.1.1) (2025-04-15)
 
 
