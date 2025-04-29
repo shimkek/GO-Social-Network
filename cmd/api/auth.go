@@ -173,8 +173,42 @@ func (app *application) createTokenHandler(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		app.internalServerError(w, r, err)
 	}
-
+	http.SetCookie(w, &http.Cookie{
+		Name:     "jwt",
+		Value:    token, // your JWT token
+		Path:     "/",
+		HttpOnly: true,                    // Prevents JS access
+		Secure:   false,                   // Ensures it's sent over HTTPS
+		SameSite: http.SameSiteStrictMode, // Protects against CSRF attacks
+	})
 	if err := app.jsonResponse(w, http.StatusCreated, token); err != nil {
+		app.internalServerError(w, r, err)
+		return
+	}
+}
+
+// LogoutUser godoc
+//
+//	@Summary		Removes jwt from http cookie
+//	@Description	Removes jwt token from httponly 'jwt' cookie
+//	@Tags			authentication
+//	@Accept			json
+//	@Produce		json
+//	@Param			payload	body		CreateUserTokenPayload	true	"User credentials"
+//	@Success		204		{string}	string
+//	@Failure		500		{object}	error
+//	@Router			/authentication/logout [post]
+func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     "jwt",
+		Value:    "", // your JWT token
+		Path:     "/",
+		HttpOnly: true,                    // Prevents JS access
+		Secure:   false,                   // Ensures it's sent over HTTPS
+		SameSite: http.SameSiteStrictMode, // Protects against CSRF attacks
+		MaxAge:   -1,
+	})
+	if err := app.jsonResponse(w, http.StatusOK, nil); err != nil {
 		app.internalServerError(w, r, err)
 		return
 	}

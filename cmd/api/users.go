@@ -180,3 +180,24 @@ func (app *application) activateUserHandler(w http.ResponseWriter, r *http.Reque
 		app.internalServerError(w, r, err)
 	}
 }
+
+// GetProfile godoc
+//
+//	@Summary		Fetches a authorized user profile
+//	@Description	Fetches a authorized user profile from auth cookie
+//	@Tags			users
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	store.User
+//	@Failure		401	{object}	error
+//	@Failure		500	{object}	error
+//	@Security		ApiKeyAuth
+//	@Router			/profile [get]
+func (app *application) getProfileHandler(w http.ResponseWriter, r *http.Request) {
+	user := getUserFromCtx(r)
+
+	if err := app.jsonResponse(w, http.StatusOK, user); err != nil {
+		app.internalServerError(w, r, err)
+		return
+	}
+}

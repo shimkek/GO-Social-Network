@@ -246,11 +246,12 @@ func (s *UsersStore) Delete(ctx context.Context, userID int64) error {
 	return nil
 }
 
+// TODO: change "WHERE email=$1 AND is_active=true" when implemented email sending
 func (s *UsersStore) GetByEmail(ctx context.Context, email string) (*User, error) {
 	query := `
 		SELECT id, username, password, email, created_at
 		FROM users
-		WHERE email=$1 AND is_active=true
+		WHERE email=$1
 	`
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
 	defer cancel()

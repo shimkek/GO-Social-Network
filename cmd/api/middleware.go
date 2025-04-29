@@ -48,21 +48,30 @@ func (app *application) BasicAuthMiddleware(next http.Handler) http.Handler {
 
 func (app *application) TokenAuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var token string
 
 		authHeader := r.Header.Get("Authorization")
-		if authHeader == "" {
-			app.unauthorizedError(w, r, fmt.Errorf("authorization header is missing"))
-			return
+		if authHeader != "" {
+			// If Authorization header is present, parse the Bearer token
+			parts := strings.Split(authHeader, " ")
+			if parts[0] != "Bearer" || len(parts) != 2 {
+				app.unauthorizedError(w, r, fmt.Errorf("authorization header is malformed"))
+				return
+			}
+			token = parts[1]
+		} else {
+			// If Authorization header is missing, check for JWT token in cookies
+			cookie, err := r.Cookie("jwt")
+			if err != nil {
+				if err == http.ErrNoCookie {
+					app.unauthorizedError(w, r, fmt.Errorf("no JWT token found in cookie and authorization header"))
+				} else {
+					app.unauthorizedError(w, r, fmt.Errorf("error retrieving cookie: %v", err))
+				}
+				return
+			}
+			token = cookie.Value
 		}
-
-		//parse base64
-		parts := strings.Split(authHeader, " ")
-		if parts[0] != "Bearer" || len(parts) != 2 {
-			app.unauthorizedError(w, r, fmt.Errorf("authorization header is malformed"))
-			return
-		}
-
-		token := parts[1]
 
 		jwtToken, err := app.authenticator.ValidateToken(token)
 		if err != nil {

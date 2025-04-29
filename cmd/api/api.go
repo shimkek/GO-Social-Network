@@ -13,6 +13,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"github.com/shimkek/GO-Social-Network/docs"
 	"github.com/shimkek/GO-Social-Network/internal/auth"
 	"github.com/shimkek/GO-Social-Network/internal/mailer"
@@ -108,6 +109,12 @@ func (app *application) mount() http.Handler {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedMethods:   []string{"GET", "POST", "DELETE", "PATCH", "PUT", "OPTIONS"},
+		MaxAge:           300,
+		AllowCredentials: true,
+	}))
 	r.Use(app.RateLimitMiddleware)
 
 	r.Route("/v1", func(r chi.Router) {
@@ -147,9 +154,15 @@ func (app *application) mount() http.Handler {
 			})
 
 		})
+
+		r.Route("/profile", func(r chi.Router) {
+			r.Use(app.TokenAuthMiddleware)
+			r.Get("/", app.getProfileHandler)
+		})
 		r.Route("/authentication", func(r chi.Router) {
 			r.Post("/user", app.registerUserHandler)
 			r.Post("/token", app.createTokenHandler)
+			r.Post("/logout", app.logoutUser)
 		})
 	})
 
