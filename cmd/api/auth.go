@@ -194,9 +194,8 @@ func (app *application) createTokenHandler(w http.ResponseWriter, r *http.Reques
 //	@Tags			authentication
 //	@Accept			json
 //	@Produce		json
-//	@Param			payload	body		CreateUserTokenPayload	true	"User credentials"
-//	@Success		204		{string}	string
-//	@Failure		500		{object}	error
+//	@Success		200	{string}	string
+//	@Failure		500	{object}	error
 //	@Router			/authentication/logout [post]
 func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{

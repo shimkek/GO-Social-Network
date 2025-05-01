@@ -153,6 +153,24 @@ info:
   termsOfService: http://swagger.io/terms/
   title: Go Social Network
 paths:
+  /authentication/logout:
+    post:
+      consumes:
+      - application/json
+      description: Removes jwt token from httponly 'jwt' cookie
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Removes jwt from http cookie
+      tags:
+      - authentication
   /authentication/token:
     post:
       consumes:
@@ -393,6 +411,29 @@ paths:
       summary: Creates a comment
       tags:
       - posts
+  /profile:
+    get:
+      consumes:
+      - application/json
+      description: Fetches a authorized user profile from auth cookie
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/store.User'
+        "401":
+          description: Unauthorized
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Fetches a authorized user profile
+      tags:
+      - users
   /users/{userID}:
     get:
       consumes:
@@ -542,6 +583,10 @@ paths:
         in: query
         name: search
         type: string
+      - description: Following
+        in: query
+        name: following
+        type: string
       produces:
       - application/json
       responses:
@@ -553,6 +598,9 @@ paths:
             type: array
         "400":
           description: Bad Request
+          schema: {}
+        "401":
+          description: Unauthorized
           schema: {}
         "500":
           description: Internal Server Error
