@@ -1,10 +1,12 @@
 'use client';
 
 import { useAuth } from '@/app/context/AuthContext';
+import { usePathname } from "next/navigation";
 import Link from 'next/link';
 
 export default function Header() {
     const { isLoggedIn } = useAuth();
+    const pathname = usePathname();
 
     return (
         <header className="bg-white">
@@ -17,7 +19,7 @@ export default function Header() {
                     <nav aria-label="Global" className="hidden md:block">
                         <ul className="flex items-center gap-6 text-sm">
                             <li> {isLoggedIn ?
-                                <Link href="/feed" className="text-gray-500 transition hover:text-gray-500/75" >
+                                <Link href="/feed" prefetch={pathname === '/feed'? false : true} className="text-gray-500 transition hover:text-gray-500/75" >
                                     Feed</Link>
                                 : <></>}
 
