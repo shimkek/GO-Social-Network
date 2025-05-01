@@ -8,13 +8,14 @@ import (
 )
 
 type PaginatedFeedQuery struct {
-	Limit  int      `json:"limit" validate:"gte=1,lte=20"`
-	Offset int      `json:"offset" validate:"gte=0"`
-	Sort   string   `json:"sort" validate:"oneof=asc desc"`
-	Tags   []string `json:"tags" validate:"max=5"`
-	Search string   `json:"search" validate:"max=100"`
-	Since  string   `json:"since"`
-	Until  string   `json:"until"`
+	Limit     int      `json:"limit" validate:"gte=1,lte=20"`
+	Offset    int      `json:"offset" validate:"gte=0"`
+	Sort      string   `json:"sort" validate:"oneof=asc desc"`
+	Tags      []string `json:"tags" validate:"max=5"`
+	Search    string   `json:"search" validate:"max=100"`
+	Following bool     `json:"following"`
+	Since     string   `json:"since"`
+	Until     string   `json:"until"`
 }
 
 func (fq PaginatedFeedQuery) Parse(r *http.Request) (PaginatedFeedQuery, error) {
@@ -70,6 +71,15 @@ func (fq PaginatedFeedQuery) Parse(r *http.Request) (PaginatedFeedQuery, error) 
 			return fq, err
 		}
 		fq.Until = u
+	}
+
+	following := qs.Get("following")
+	if following != "" {
+		f, err := strconv.ParseBool(following)
+		if err != nil {
+			return fq, err
+		}
+		fq.Following = f
 	}
 
 	return fq, nil

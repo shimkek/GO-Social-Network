@@ -48,11 +48,23 @@ func (s *PostsStore) GetUserFeed(ctx context.Context, userID int64, fq Paginated
 	SELECT p.id, p.user_id, p.title, p.content, p.created_at, p.updated_at, p.tags, u.username, COUNT(c.id) as comments_count
 	FROM posts p
 	LEFT JOIN comments c ON p.id = c.post_id
-	LEFT JOIN users u on p.user_id = u.id
-	JOIN followers f ON f.followed_id = p.user_id OR p.user_id = $1
-	WHERE 
-		f.follower_id = $1 AND
-		(p.title ILIKE '%' || $4 || '%' OR p.content ILIKE '%' || $4 || '%') AND
+	LEFT JOIN users u on p.user_id = u.id `
+
+	if fq.Following {
+		query += `JOIN followers f ON f.followed_id = p.user_id OR p.user_id = $1 `
+	}
+
+	query += `WHERE `
+
+	if fq.Following {
+		query += `f.follower_id = $1 AND `
+	} else {
+		// Add a dummy condition that's always true when not following
+		// This ensures $1 is used in both branches
+		query += `$1 = $1 AND `
+	}
+
+	query += `(p.title ILIKE '%' || $4 || '%' OR p.content ILIKE '%' || $4 || '%') AND
 		(p.tags @> $5 OR $5 = '{}')` + sinceString + untilString +
 		`GROUP BY p.id, u.username
 	ORDER BY created_at ` + fq.Sort +

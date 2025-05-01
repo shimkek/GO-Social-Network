@@ -13,15 +13,17 @@ import (
 //	@Tags			feed
 //	@Accept			json
 //	@Produce		json
-//	@Param			since	query		string	false	"Since"
-//	@Param			until	query		string	false	"Until"
-//	@Param			limit	query		int		false	"Limit"
-//	@Param			offset	query		int		false	"Offset"
-//	@Param			tags	query		string	false	"Tags"
-//	@Param			search	query		string	false	"Search"
-//	@Success		200		{object}	[]store.PostWithMetadata
-//	@Failure		400		{object}	error
-//	@Failure		500		{object}	error
+//	@Param			since		query		string	false	"Since"
+//	@Param			until		query		string	false	"Until"
+//	@Param			limit		query		int		false	"Limit"
+//	@Param			offset		query		int		false	"Offset"
+//	@Param			tags		query		string	false	"Tags"
+//	@Param			search		query		string	false	"Search"
+//	@Param			following	query		string	false	"Following"
+//	@Success		200			{object}	[]store.PostWithMetadata
+//	@Failure		400			{object}	error
+//	@Failure		401			{object}	error
+//	@Failure		500			{object}	error
 //	@Security		ApiKeyAuth
 //	@Router			/users/feed [get]
 func (app *application) getUserFeedHandler(w http.ResponseWriter, r *http.Request) {
@@ -29,11 +31,12 @@ func (app *application) getUserFeedHandler(w http.ResponseWriter, r *http.Reques
 	user := getUserFromCtx(r)
 
 	fq := store.PaginatedFeedQuery{
-		Limit:  20,
-		Offset: 0,
-		Sort:   "desc",
-		Tags:   make([]string, 0),
-		Search: "",
+		Limit:     20,
+		Offset:    0,
+		Sort:      "desc",
+		Tags:      make([]string, 0),
+		Search:    "",
+		Following: false,
 	}
 
 	fq, err := fq.Parse(r)
