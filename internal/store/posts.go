@@ -67,7 +67,7 @@ func (s *PostsStore) GetUserFeed(ctx context.Context, userID int64, fq Paginated
 	query += `(p.title ILIKE '%' || $4 || '%' OR p.content ILIKE '%' || $4 || '%') AND
 		(p.tags @> $5 OR $5 = '{}')` + sinceString + untilString +
 		`GROUP BY p.id, u.username
-	ORDER BY created_at ` + fq.Sort +
+		ORDER BY p.created_at ` + fq.Sort + `, p.id ` + fq.Sort +
 		` LIMIT $2 OFFSET $3`
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
 	defer cancel()
