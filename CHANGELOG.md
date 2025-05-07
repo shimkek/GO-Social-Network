@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.3.0](https://github.com/shimkek/GO-Social-Network/compare/v1.2.0...v1.3.0) (2025-05-07)
+
+
+### Features
+
+* feed returns all posts, add following filter ([472492c](https://github.com/shimkek/GO-Social-Network/commit/472492cea024af0daa2711dfb63b1a5d7ddf1592))
+* **web:** infinite scroll and search by tags ([5a431d4](https://github.com/shimkek/GO-Social-Network/commit/5a431d4a500dfd0cb17c725d29334bac5ee9158f))
+
+
+### Bug Fixes
+
+* documentation fix ([efdbcbd](https://github.com/shimkek/GO-Social-Network/commit/efdbcbd5028ee71343aa7bd8f60e371a9f07a5d6))
+* fix feed order by (returned same posts even with different offsets due to same created_at date) ([8fbde4b](https://github.com/shimkek/GO-Social-Network/commit/8fbde4be69504737cd4a73b962b9e4dfaa3748a5))
+* seeding and other minor ([ef7ae5e](https://github.com/shimkek/GO-Social-Network/commit/ef7ae5eb62c2681ee759b5ec0096c269e12f6738))
+
 ## [1.2.0](https://github.com/shimkek/GO-Social-Network/compare/v1.1.1...v1.2.0) (2025-04-29)
 
 
