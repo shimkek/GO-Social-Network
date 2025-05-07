@@ -59,7 +59,12 @@ func (app *application) createPostHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	if err := app.jsonResponse(w, http.StatusCreated, post); err != nil {
+	p := &store.PostWithMetadata{
+		Post:         *post,
+		CommentCount: 0,
+		Username:     user.Username,
+	}
+	if err := app.jsonResponse(w, http.StatusCreated, p); err != nil {
 		app.internalServerError(w, r, err)
 		return
 	}
