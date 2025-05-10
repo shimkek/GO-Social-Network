@@ -25,10 +25,10 @@ export default function PostCard({
             <CardContent className="space-y-2">
                 <div className="flex justify-between text-sm text-gray-500">
                     <span>@{username}</span>
-                    <span>{new Date(created_at).toLocaleDateString()}</span>
+                    <span>{new Date(created_at).toLocaleString()}</span>
                 </div>
 
-                <h2 className="text-xl font-semibold">{title}</h2>
+                <Link className="text-xl font-semibold" href={`/post/${id}`}>{title}</Link>
 
                 <p className="text-gray-800 whitespace-pre-line">{content}</p>
 
