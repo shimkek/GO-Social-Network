@@ -54,8 +54,8 @@ export const authApi = {
 // Users API
 export const usersApi = {
     async getUserProfile(userID: number): Promise<Response> {
-        const response = await fetch(`/users/${userID}`);
-        return response.json();
+        const response = await fetchWithAuth(`/users/${userID}`);
+        return response;
     },
     async getProfile(): Promise<Response> {
         const response = await fetch(`${API_BASE_URL}/profile`, { credentials: "include" });
@@ -80,16 +80,19 @@ export const usersApi = {
 // Posts API
 export const postsApi = {
     async createPost(payload: { title: string; content: string; tags?: string[] }): Promise<Response> {
-        const response = await fetch('/posts', {
+        const response = await fetchWithAuth('/posts', {
             method: 'POST',
             body: JSON.stringify(payload),
         });
-        return response.json();
+        const responsejson = await response.json();
+        const post = responsejson.data;
+        console.log(post);
+        return post;
     },
 
-    async getPost(id: number): Promise<Response> {
-        const response = await fetch(`/posts/${id}`);
-        return response.json();
+    async getPost(id: number): Promise<any> {
+        const response = await fetchWithAuth(`/posts/${id}`);
+        return response;
     },
 
     async updatePost(id: number, payload: { title?: string; content?: string; tags?: string[] }): Promise<Response> {
