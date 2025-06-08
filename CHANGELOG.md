@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.3.0](https://github.com/shimkek/GO-Social-Network/compare/v1.2.0...v1.3.0) (2025-06-08)
+
+
+### Features
+
+* add readme ([734d22b](https://github.com/shimkek/GO-Social-Network/commit/734d22be93cccdb5285112f29458c86c675f9148))
+* display post author username and comments on the post page ([bc9e2fd](https://github.com/shimkek/GO-Social-Network/commit/bc9e2fdc1aa8e14774dd0723bbb9df7ec27f1f1c))
+* feed returns all posts, add following filter ([472492c](https://github.com/shimkek/GO-Social-Network/commit/472492cea024af0daa2711dfb63b1a5d7ddf1592))
+* remove feed button from header and change colors ([eac1afb](https://github.com/shimkek/GO-Social-Network/commit/eac1afb53a5b633343444307af1f0b8fd032c24f))
+* return posts with metadata on creating ([0feeba5](https://github.com/shimkek/GO-Social-Network/commit/0feeba5d95bb4b843fa325fb18c3937d647a03db))
+* **web:** infinite scroll and search by tags ([5a431d4](https://github.com/shimkek/GO-Social-Network/commit/5a431d4a500dfd0cb17c725d29334bac5ee9158f))
+
+
+### Bug Fixes
+
+* api calls fix ([e083615](https://github.com/shimkek/GO-Social-Network/commit/e0836158b5b7174c0521af35c81b1207ce7c1fb4))
+* documentation fix ([efdbcbd](https://github.com/shimkek/GO-Social-Network/commit/efdbcbd5028ee71343aa7bd8f60e371a9f07a5d6))
+* fix feed order by (returned same posts even with different offsets due to same created_at date) ([8fbde4b](https://github.com/shimkek/GO-Social-Network/commit/8fbde4be69504737cd4a73b962b9e4dfaa3748a5))
+* fix post page route, refactor ([292e34c](https://github.com/shimkek/GO-Social-Network/commit/292e34c74189654576645b33fa07b3e8b9c227c3))
+* getUser swagger documentation ([7337081](https://github.com/shimkek/GO-Social-Network/commit/7337081886a519339a17701a4321adcf6fe89474))
+* seeding and other minor ([ef7ae5e](https://github.com/shimkek/GO-Social-Network/commit/ef7ae5eb62c2681ee759b5ec0096c269e12f6738))
+
 ## [1.2.0](https://github.com/shimkek/GO-Social-Network/compare/v1.1.1...v1.2.0) (2025-04-29)
 
 
