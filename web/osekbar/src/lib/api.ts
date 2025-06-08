@@ -17,11 +17,11 @@ export const authApi = {
         password: string;
         username: string;
     }): Promise<Response> {
-        const response = await fetch('/authentication/user', {
+        const response = await fetchWithAuth('/authentication/user', {
             method: 'POST',
             body: JSON.stringify(payload),
         });
-        return response.json();
+        return response;
     },
 
     async login(payload: { email: string; password: string }): Promise<Response> {
@@ -32,15 +32,15 @@ export const authApi = {
         return response;
     },
 
-    async activateAccount(token: string): Promise<{ message: string }> {
-        const response = await fetch(`/users/activate/${token}`, {
+    async activateAccount(token: string): Promise<Response> {
+        const response = await fetchWithAuth(`/users/activate/${token}`, {
             method: 'PUT',
         });
-        return response.json();
+        return response;
     },
 
     async logout(): Promise<Response> {
-        const response = await fetch(`${API_BASE_URL}/authentication/logout`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}/authentication/logout`, {
             method: 'POST',
             credentials: "include"
         });
@@ -58,22 +58,22 @@ export const usersApi = {
         return response;
     },
     async getProfile(): Promise<Response> {
-        const response = await fetch(`${API_BASE_URL}/profile`, { credentials: "include" });
+        const response = await fetchWithAuth(`${API_BASE_URL}/profile`, { credentials: "include" });
         return response;
     },
 
     async followUser(userID: number): Promise<Response> {
-        const response = await fetch(`/users/${userID}/follow`, {
+        const response = await fetchWithAuth(`/users/${userID}/follow`, {
             method: 'PUT',
         });
-        return response.json();
+        return response;
     },
 
     async unfollowUser(userID: number): Promise<Response> {
-        const response = await fetch(`/users/${userID}/unfollow`, {
+        const response = await fetchWithAuth(`/users/${userID}/unfollow`, {
             method: 'PUT',
         });
-        return response.json();
+        return response;
     },
 };
 
@@ -96,25 +96,26 @@ export const postsApi = {
     },
 
     async updatePost(id: number, payload: { title?: string; content?: string; tags?: string[] }): Promise<Response> {
-        const response = await fetch(`/posts/${id}`, {
+        const response = await fetchWithAuth(`/posts/${id}`, {
             method: 'PATCH',
             body: JSON.stringify(payload),
         });
-        return response.json();
+        return response;
     },
 
-    async deletePost(id: number): Promise<void> {
-        await fetch(`/posts/${id}`, {
+    async deletePost(id: number): Promise<Response> {
+        const response = await fetchWithAuth(`/posts/${id}`, {
             method: 'DELETE',
         });
+        return response;
     },
 
-    async createComment(postId: number, content: string): Promise<Comment> {
-        const response = await fetch(`/posts/${postId}/comment`, {
+    async createComment(postId: number, content: string): Promise<Response> {
+        const response = await fetchWithAuth(`/posts/${postId}/comment`, {
             method: 'POST',
             body: JSON.stringify({ content }),
         });
-        return response.json();
+        return response;
     },
 };
 
